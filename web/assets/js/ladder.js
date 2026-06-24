@@ -24,9 +24,9 @@
   function resize(){
     const ratio=window.devicePixelRatio || 1;
     const width=canvas.parentElement?.clientWidth || 980;
-    const height = width < 576
-  ? Math.max(560, width * 1.35)
-  : Math.max(520, Math.min(640, width * 0.56));
+    const height = width <= 640
+    ? Math.max(620, width * 1.62)
+    : Math.max(540, Math.min(680, width * 0.62));
     canvas.style.width='100%';
     canvas.style.height=height+'px';
     canvas.width=width*ratio;
@@ -38,23 +38,26 @@
   function coords(i){
     const width = w();
     const height = h();
-    const small = width < 760;
+    const mobile = width <= 640;
   
-    const leftPad = small ? 18 : 52;
-    const rightPad = small ? 22 : 72;
-    const topPad = small ? 122 : 150;
-    const bottomPad = small ? 96 : 118;
+    const totalSteps = 6;
   
-    const bw = small ? Math.min(52, Math.max(42, width / 8.4)) : 92;
-    const bh = small ? 42 : 58;
+    const leftPad = mobile ? 28 : 60;
+    const rightPad = mobile ? 88 : 120;
+    const topPad = mobile ? 130 : 150;
+    const bottomPad = mobile ? 130 : 120;
+  
+    const bw = mobile ? 42 : 86;
+    const bh = mobile ? 38 : 56;
+  
+    const usableWidth = width - leftPad - rightPad - bw;
+    const step = usableWidth / totalSteps;
   
     const startX = leftPad;
-    const endX = Math.max(startX + (bw * 6.4), width - rightPad - bw);
-    const step = (endX - startX) / 6;
-  
     const startY = height - bottomPad;
-    const endY = topPad;
-    const rise = (startY - endY) / 6;
+  
+    const usableHeight = startY - topPad;
+    const rise = usableHeight / totalSteps;
   
     return {
       x: startX + i * step,
@@ -62,7 +65,7 @@
       step,
       bw,
       bh,
-      small
+      small: mobile
     };
   }
 

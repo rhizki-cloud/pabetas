@@ -109,3 +109,20 @@
         font-size: 1.15rem;
     }
 }
+/* Fix mobile tangga satuan */
+@media (max-width: 640px) {
+    .ladder-card,
+    .ladder-board,
+    .unit-ladder-card,
+    .student-card {
+        overflow: visible !important;
+    }
+
+    canvas#ladderCanvas,
+    #ladderCanvas {
+        width: 100% !important;
+        max-width: 100% !important;
+        display: block;
+        margin: 0 auto;
+    }
+}
