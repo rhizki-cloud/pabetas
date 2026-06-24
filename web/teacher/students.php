@@ -14,11 +14,25 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
         flash('success','Murid berhasil ditambahkan.'); redirect('teacher/students.php');
     }
     if ($action==='reset') {
-        $pdo->prepare('UPDATE users SET password=? WHERE id=? AND role="murid"')->execute([password_hash('siswa123', PASSWORD_DEFAULT),(int)$_POST['user_id']]);
+        $pdo->prepare("UPDATE users SET password=? WHERE id=? AND role=?")
+        ->execute([
+            password_hash('siswa123', PASSWORD_DEFAULT),
+            (int) $_POST['user_id'],
+            'murid'
+        ]);
         flash('success','Password murid direset menjadi siswa123.'); redirect('teacher/students.php');
     }
 }
-$students=$pdo->query('SELECT u.*, s.class_name, s.nis FROM users u LEFT JOIN students s ON s.user_id=u.id WHERE u.role="murid" ORDER BY u.name')->fetchAll();
+$stmt = $pdo->prepare("
+    SELECT u.*, s.class_name, s.nis
+    FROM users u
+    LEFT JOIN students s ON s.user_id = u.id
+    WHERE u.role = ?
+    ORDER BY u.name
+");
+
+$stmt->execute(['murid']);
+$students = $stmt->fetchAll();
 render_header('Data Murid','students');
 ?>
 <div class="page-title"><h1>Data Murid</h1><p>Tambah akun murid dan reset password untuk keperluan uji coba kelas.</p></div>
