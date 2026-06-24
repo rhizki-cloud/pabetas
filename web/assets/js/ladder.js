@@ -26,22 +26,22 @@
   function h(){ return canvas.clientHeight || 540; }
 
   function resize(){
-  const ratio = window.devicePixelRatio || 1;
-  const width = canvas.parentElement?.clientWidth || 980;
-
-  const height = width <= 640
-    ? Math.max(760, width * 1.78)
-    : Math.max(620, Math.min(760, width * 0.58));
-
-  canvas.style.width = '100%';
-  canvas.style.height = height + 'px';
-
-  canvas.width = width * ratio;
-  canvas.height = height * ratio;
-
-  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-  draw();
-}
+    const ratio = window.devicePixelRatio || 1;
+    const width = canvas.parentElement?.clientWidth || 980;
+  
+    const height = width <= 640
+      ? Math.max(820, width * 1.95)
+      : Math.max(640, Math.min(780, width * 0.62));
+  
+    canvas.style.width = '100%';
+    canvas.style.height = height + 'px';
+  
+    canvas.width = width * ratio;
+    canvas.height = height * ratio;
+  
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    draw();
+  }
 
 function coords(i){
   const width = w();
@@ -188,21 +188,21 @@ function coords(i){
     ctx.font = `900 ${mobile ? 24 : 32}px system-ui`;
     ctx.fillText('Tangga Satuan', 24, mobile ? 44 : 48);
   
-    ctx.font = `800 ${mobile ? 12 : 15}px system-ui`;
+    ctx.font = `800 ${mobile ? 11 : 15}px system-ui`;
     ctx.fillStyle = '#475569';
     ctx.fillText('Turun = ×10 tambah 0 • Naik = ÷10 kurangi 0', 24, mobile ? 70 : 76);
   
     ctx.fillStyle = '#1e3a8a';
-    ctx.font = `900 ${mobile ? 12 : 15}px system-ui`;
+    ctx.font = `900 ${mobile ? 11 : 15}px system-ui`;
   
-    const maxText = mobile && currentStepText.length > 42
-      ? currentStepText.substring(0, 42) + '...'
+    const stepText = mobile && currentStepText.length > 46
+      ? currentStepText.substring(0, 46) + '...'
       : currentStepText;
   
-    ctx.fillText(maxText, 24, mobile ? 98 : 108);
+    ctx.fillText(stepText, 24, mobile ? 96 : 108);
   
     ctx.strokeStyle = '#94a3b8';
-    ctx.lineWidth = mobile ? 4 : 6;
+    ctx.lineWidth = mobile ? 3.5 : 6;
     ctx.lineCap = 'round';
     ctx.beginPath();
   
@@ -220,7 +220,7 @@ function coords(i){
   
     if (path.length > 1) {
       ctx.strokeStyle = '#f97316';
-      ctx.lineWidth = mobile ? 5 : 7;
+      ctx.lineWidth = mobile ? 4 : 7;
       ctx.setLineDash([10, 8]);
       ctx.beginPath();
   
@@ -236,6 +236,24 @@ function coords(i){
   
       ctx.stroke();
       ctx.setLineDash([]);
+    }
+  
+    function drawMiniBubble(text, x, y) {
+      const bw = mobile ? 34 : 48;
+      const bh = mobile ? 19 : 24;
+  
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = mobile ? 1.4 : 2;
+  
+      rr(x - bw / 2, y - bh / 2, bw, bh, bh / 2);
+      ctx.fill();
+      ctx.stroke();
+  
+      ctx.fillStyle = '#0f172a';
+      ctx.textAlign = 'center';
+      ctx.font = `900 ${mobile ? 10 : 12}px system-ui`;
+      ctx.fillText(text, x, y + (mobile ? 3.5 : 4));
     }
   
     for (let i = 0; i < units.length; i++) {
@@ -256,37 +274,40 @@ function coords(i){
       ctx.font = `900 ${mobile ? 22 : 34}px system-ui`;
       ctx.fillText(units[i], c.x + c.bw / 2, c.y + (mobile ? 31 : 43));
   
-      if (!mobile) {
-        ctx.font = `800 13px system-ui`;
-        ctx.fillStyle = '#475569';
-        ctx.fillText(names[i], c.x + c.bw / 2, c.y + c.bh + 20);
-      }
+      // Nama satuan tetap tampil di mobile, tapi versi kecil agar tidak tabrakan
+      ctx.font = `800 ${mobile ? 9.5 : 13}px system-ui`;
+      ctx.fillStyle = '#475569';
+  
+      const labelY = mobile
+        ? c.y + c.bh + 13
+        : c.y + c.bh + 20;
+  
+      ctx.fillText(names[i], c.x + c.bw / 2, labelY);
   
       if (isFrom) {
-        drawBadge('DARI', c.x + c.bw / 2, c.y - 35, 'from');
+        const badgeY = mobile ? c.y - 18 : c.y - 35;
+        drawBadge('DARI', c.x + c.bw / 2, badgeY, 'from');
       }
   
       if (isTo) {
-        drawBadge('KE', c.x + c.bw / 2, c.y + c.bh + (mobile ? 10 : 28), 'to');
+        const badgeX = mobile ? c.x + c.bw + 22 : c.x + c.bw / 2;
+        const badgeY = mobile ? c.y + c.bh / 2 : c.y + c.bh + 28;
+        drawBadge('KE', badgeX, badgeY, 'to');
       }
   
-      if (!mobile && i < units.length - 1) {
-        const a = coords(i);
-        const b = coords(i + 1);
+      // Bubble ×10 tampil juga di mobile, tapi lebih kecil dan digeser dari jalur utama
+      if (i < units.length - 1) {
+        const a = cardCenter(i);
+        const b = cardCenter(i + 1);
   
-        const bx = (a.x + a.bw + b.x) / 2 - 24;
-        const by = (a.y + a.bh + b.y) / 2 - 14;
+        const mx = (a.x + b.x) / 2;
+        const my = (a.y + b.y) / 2;
   
-        ctx.fillStyle = '#fff';
-        ctx.strokeStyle = '#cbd5e1';
-        ctx.lineWidth = 2;
-        rr(bx, by, 48, 24, 12);
-        ctx.fill();
-        ctx.stroke();
-  
-        ctx.fillStyle = '#0f172a';
-        ctx.font = '900 12px system-ui';
-        ctx.fillText('×10', bx + 24, by + 17);
+        if (mobile) {
+          drawMiniBubble('×10', mx - 16, my + 18);
+        } else {
+          drawMiniBubble('×10', mx - 24, my + 8);
+        }
       }
     }
   
