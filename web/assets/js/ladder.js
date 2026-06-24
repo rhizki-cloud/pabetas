@@ -7,6 +7,10 @@
   if(!canvas) return;
   const ctx=canvas.getContext('2d');
 
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
   let pos=3;
   let anim=null;
   let pauseTimer=null;
@@ -22,52 +26,81 @@
   function h(){ return canvas.clientHeight || 540; }
 
   function resize(){
-    const ratio=window.devicePixelRatio || 1;
-    const width=canvas.parentElement?.clientWidth || 980;
-    const height = width <= 640
-    ? Math.max(620, width * 1.62)
-    : Math.max(540, Math.min(680, width * 0.62));
-    canvas.style.width='100%';
-    canvas.style.height=height+'px';
-    canvas.width=width*ratio;
-    canvas.height=height*ratio;
-    ctx.setTransform(ratio,0,0,ratio,0,0);
-    draw();
-  }
+  const ratio = window.devicePixelRatio || 1;
+  const width = canvas.parentElement?.clientWidth || 980;
 
-  function coords(i){
-    const width = w();
-    const height = h();
-    const mobile = width <= 640;
-  
-    const totalSteps = 6;
-  
-    const leftPad = mobile ? 28 : 60;
-    const rightPad = mobile ? 88 : 120;
-    const topPad = mobile ? 130 : 150;
-    const bottomPad = mobile ? 130 : 120;
-  
-    const bw = mobile ? 42 : 86;
-    const bh = mobile ? 38 : 56;
-  
-    const usableWidth = width - leftPad - rightPad - bw;
-    const step = usableWidth / totalSteps;
-  
+  const height = width <= 640
+    ? Math.max(760, width * 1.78)
+    : Math.max(620, Math.min(760, width * 0.58));
+
+  canvas.style.width = '100%';
+  canvas.style.height = height + 'px';
+
+  canvas.width = width * ratio;
+  canvas.height = height * ratio;
+
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  draw();
+}
+
+function coords(i){
+  const width = w();
+  const height = h();
+  const mobile = width <= 640;
+  const totalSteps = 6;
+
+  if (mobile) {
+    const bw = clamp(width * 0.15, 50, 60);
+    const bh = clamp(width * 0.12, 42, 50);
+
+    const leftPad = clamp(width * 0.12, 38, 64);
+    const rightPad = 58;
+
     const startX = leftPad;
-    const startY = height - bottomPad;
-  
-    const usableHeight = startY - topPad;
-    const rise = usableHeight / totalSteps;
-  
+    const endX = Math.min(width - rightPad - bw, width * 0.70);
+
+    const startY = height - 105;
+    const endY = 195;
+
+    const step = (endX - startX) / totalSteps;
+    const rise = (startY - endY) / totalSteps;
+
     return {
       x: startX + i * step,
       y: startY - i * rise,
       step,
       bw,
       bh,
-      small: mobile
+      small: true,
+      mobile: true
     };
   }
+
+  const bw = clamp(width * 0.105, 92, 126);
+  const bh = clamp(width * 0.055, 58, 72);
+
+  const leftPad = 74;
+  const rightPad = 96;
+
+  const startX = leftPad;
+  const endX = width - rightPad - bw;
+
+  const startY = height - 100;
+  const endY = 115;
+
+  const step = (endX - startX) / totalSteps;
+  const rise = (startY - endY) / totalSteps;
+
+  return {
+    x: startX + i * step,
+    y: startY - i * rise,
+    step,
+    bw,
+    bh,
+    small: false,
+    mobile: false
+  };
+}
 
   function rr(x,y,w,h,r){
     ctx.beginPath();
@@ -135,124 +168,155 @@
   }
 
   function draw(){
-    const width=w(), height=h();
-
-    // Bersihkan seluruh canvas setiap frame. Ini mencegah gambar karakter
-    // terlihat bertumpuk ketika animasi dipanggil berulang.
-    ctx.clearRect(-2,-2,width+4,height+4);
-
-    const g=ctx.createLinearGradient(0,0,width,height);
-    g.addColorStop(0,'#e0f2fe');
-    g.addColorStop(.55,'#fff7ed');
-    g.addColorStop(1,'#ecfccb');
-    ctx.fillStyle=g;
-    rr(0,0,width,height,28);
+    const width = w();
+    const height = h();
+    const mobile = width <= 640;
+  
+    ctx.clearRect(-2, -2, width + 4, height + 4);
+  
+    const g = ctx.createLinearGradient(0, 0, width, height);
+    g.addColorStop(0, '#e0f2fe');
+    g.addColorStop(.55, '#fff7ed');
+    g.addColorStop(1, '#ecfccb');
+  
+    ctx.fillStyle = g;
+    rr(0, 0, width, height, mobile ? 26 : 30);
     ctx.fill();
-
-    ctx.fillStyle='#0f172a';
-    ctx.textAlign='left';
-    ctx.font=`900 ${width<760?22:30}px system-ui`;
-    ctx.fillText('Tangga Satuan',24,42);
-    ctx.font=`800 ${width<760?12:15}px system-ui`;
-    ctx.fillStyle='#475569';
-    ctx.fillText('Turun = ×10 tambah 0 • Naik = ÷10 kurangi 0',24,68);
-
-    ctx.fillStyle='#1e3a8a';
-    ctx.font=`900 ${width<760?12:15}px system-ui`;
-    ctx.fillText(currentStepText,24,94);
-
-    // Jalur dasar
-    ctx.strokeStyle='#94a3b8';
-    ctx.lineWidth=6;
-    ctx.lineCap='round';
+  
+    ctx.fillStyle = '#0f172a';
+    ctx.textAlign = 'left';
+    ctx.font = `900 ${mobile ? 24 : 32}px system-ui`;
+    ctx.fillText('Tangga Satuan', 24, mobile ? 44 : 48);
+  
+    ctx.font = `800 ${mobile ? 12 : 15}px system-ui`;
+    ctx.fillStyle = '#475569';
+    ctx.fillText('Turun = ×10 tambah 0 • Naik = ÷10 kurangi 0', 24, mobile ? 70 : 76);
+  
+    ctx.fillStyle = '#1e3a8a';
+    ctx.font = `900 ${mobile ? 12 : 15}px system-ui`;
+  
+    const maxText = mobile && currentStepText.length > 42
+      ? currentStepText.substring(0, 42) + '...'
+      : currentStepText;
+  
+    ctx.fillText(maxText, 24, mobile ? 98 : 108);
+  
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = mobile ? 4 : 6;
+    ctx.lineCap = 'round';
     ctx.beginPath();
-    for(let i=0;i<units.length;i++){
-      const p=cardCenter(i);
-      if(i===0) ctx.moveTo(p.x,p.y);
-      else ctx.lineTo(p.x,p.y);
+  
+    for (let i = 0; i < units.length; i++) {
+      const p = cardCenter(i);
+  
+      if (i === 0) {
+        ctx.moveTo(p.x, p.y);
+      } else {
+        ctx.lineTo(p.x, p.y);
+      }
     }
+  
     ctx.stroke();
-
-    // Jalur aktif berdasarkan pilihan dari kontrol, bukan posisi lama.
-    if(path.length>1){
-      ctx.strokeStyle='#f97316';
-      ctx.lineWidth=7;
-      ctx.setLineDash([10,8]);
+  
+    if (path.length > 1) {
+      ctx.strokeStyle = '#f97316';
+      ctx.lineWidth = mobile ? 5 : 7;
+      ctx.setLineDash([10, 8]);
       ctx.beginPath();
-      path.forEach((i,k)=>{
-        const p=cardCenter(i);
-        if(k===0) ctx.moveTo(p.x,p.y);
-        else ctx.lineTo(p.x,p.y);
+  
+      path.forEach((i, k) => {
+        const p = cardCenter(i);
+  
+        if (k === 0) {
+          ctx.moveTo(p.x, p.y);
+        } else {
+          ctx.lineTo(p.x, p.y);
+        }
       });
+  
       ctx.stroke();
       ctx.setLineDash([]);
     }
-
-    // Kartu satuan
-    for(let i=0;i<units.length;i++){
-      const c=coords(i);
-      const isFrom=i===activeFrom;
-      const isTo=i===activeTo;
-      ctx.fillStyle=colors[i];
-      rr(c.x,c.y,c.bw,c.bh,16);
+  
+    for (let i = 0; i < units.length; i++) {
+      const c = coords(i);
+      const isFrom = i === activeFrom;
+      const isTo = i === activeTo;
+  
+      ctx.fillStyle = colors[i];
+      rr(c.x, c.y, c.bw, c.bh, mobile ? 14 : 18);
       ctx.fill();
-      ctx.strokeStyle=isFrom?'#2563eb':isTo?'#16a34a':'#1e293b';
-      ctx.lineWidth=isFrom||isTo?5:2.5;
+  
+      ctx.strokeStyle = isFrom ? '#2563eb' : isTo ? '#16a34a' : '#1e293b';
+      ctx.lineWidth = isFrom || isTo ? (mobile ? 4 : 5) : (mobile ? 2.2 : 2.8);
       ctx.stroke();
-
-      ctx.textAlign='center';
-      ctx.fillStyle='#0f172a';
-      ctx.font=`900 ${c.small?20:28}px system-ui`;
-      ctx.fillText(units[i],c.x+c.bw/2,c.y+(c.small?30:38));
-      ctx.font=`800 ${c.small?9:12}px system-ui`;
-      ctx.fillStyle='#475569';
-      ctx.fillText(names[i],c.x+c.bw/2,c.y+c.bh+17);
-
-      if(isFrom) drawBadge('DARI',c.x+c.bw/2,c.y-32,'from');
-      if(isTo) drawBadge('KE',c.x+c.bw/2,c.y+c.bh+25,'to');
-
-      if(i<units.length-1){
-        const a=coords(i), b=coords(i+1);
-        const bx=(a.x+b.x+a.bw)/2-8, by=(a.y+b.y+a.bh)/2-8;
-        ctx.fillStyle='#fff';
-        ctx.strokeStyle='#cbd5e1';
-        ctx.lineWidth=2;
-        rr(bx,by,c.small?38:48,24,12);
+  
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#0f172a';
+      ctx.font = `900 ${mobile ? 22 : 34}px system-ui`;
+      ctx.fillText(units[i], c.x + c.bw / 2, c.y + (mobile ? 31 : 43));
+  
+      if (!mobile) {
+        ctx.font = `800 13px system-ui`;
+        ctx.fillStyle = '#475569';
+        ctx.fillText(names[i], c.x + c.bw / 2, c.y + c.bh + 20);
+      }
+  
+      if (isFrom) {
+        drawBadge('DARI', c.x + c.bw / 2, c.y - 35, 'from');
+      }
+  
+      if (isTo) {
+        drawBadge('KE', c.x + c.bw / 2, c.y + c.bh + (mobile ? 10 : 28), 'to');
+      }
+  
+      if (!mobile && i < units.length - 1) {
+        const a = coords(i);
+        const b = coords(i + 1);
+  
+        const bx = (a.x + a.bw + b.x) / 2 - 24;
+        const by = (a.y + a.bh + b.y) / 2 - 14;
+  
+        ctx.fillStyle = '#fff';
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        rr(bx, by, 48, 24, 12);
         ctx.fill();
         ctx.stroke();
-        ctx.fillStyle='#0f172a';
-        ctx.font=`900 ${c.small?10:12}px system-ui`;
-        ctx.fillText('×10',bx+(c.small?19:24),by+17);
+  
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '900 12px system-ui';
+        ctx.fillText('×10', bx + 24, by + 17);
       }
     }
-
-    // Posisi karakter interpolasi, bukan dibulatkan, agar geraknya benar-benar mengikuti tangga.
-    const left=Math.floor(pos);
-    const right=Math.ceil(pos);
-    const t=pos-left;
-    const p1=cardCenter(left);
-    const p2=cardCenter(right);
-    const rawX=p1.x+(p2.x-p1.x)*t;
-    const rawY=p1.y+(p2.y-p1.y)*t-62;
-
-    // Karakter diberi area aman supaya tidak menabrak kartu mm/dam
-    // atau keluar panel pada layar besar maupun kecil.
-    const x=Math.max(58, Math.min(width-92, rawX));
-    const y=Math.max(105, Math.min(height-88, rawY));
-    const scale=Math.max(.62, Math.min(.86, .72+(pos-3)*0.02));
-    drawCharacter(x,y,scale);
-
-    if(floatAlpha>0){
+  
+    const left = Math.floor(pos);
+    const right = Math.ceil(pos);
+    const t = pos - left;
+  
+    const p1 = cardCenter(left);
+    const p2 = cardCenter(right);
+  
+    const rawX = p1.x + (p2.x - p1.x) * t;
+    const rawY = p1.y + (p2.y - p1.y) * t - (mobile ? 56 : 66);
+  
+    const x = clamp(rawX, mobile ? 48 : 70, width - (mobile ? 58 : 90));
+    const y = clamp(rawY, mobile ? 150 : 130, height - (mobile ? 105 : 100));
+  
+    const scale = mobile ? 0.58 : 0.78;
+    drawCharacter(x, y, scale);
+  
+    if (floatAlpha > 0) {
       ctx.save();
-      ctx.globalAlpha=floatAlpha;
-      ctx.fillStyle='#f97316';
-      ctx.textAlign='center';
-      ctx.font=`900 ${width<760?22:34}px system-ui`;
-      ctx.fillText(floatText,x,y-54);
+      ctx.globalAlpha = floatAlpha;
+      ctx.fillStyle = '#f97316';
+      ctx.textAlign = 'center';
+      ctx.font = `900 ${mobile ? 20 : 34}px system-ui`;
+      ctx.fillText(floatText, x, y - (mobile ? 46 : 56));
       ctx.restore();
     }
-
-    ctx.textAlign='left';
+  
+    ctx.textAlign = 'left';
   }
 
   function numberText(n){

@@ -55,74 +55,32 @@
 @media(max-width:992px){.auth-shell,.auth-shell-register{grid-template-columns:1fr;max-width:720px}.auth-hero-panel{min-height:auto;padding:30px}.auth-hero-panel h1{font-size:2.7rem}.auth-form-panel{padding:28px}.auth-feature-list{grid-template-columns:1fr}.auth-actions{grid-template-columns:1fr 1fr}.nav-user-box #soundToggle{min-width:auto}}
 @media(max-width:576px){.auth-container{align-items:flex-start}.auth-shell{border-radius:28px}.auth-hero-panel{padding:24px}.auth-logo{width:74px;height:74px}.auth-hero-panel h1{font-size:2.15rem}.auth-hero-panel p{font-size:1rem}.auth-form-panel{padding:22px}.auth-form-panel h2{font-size:1.8rem}.role-picker{grid-template-columns:1fr}.auth-actions{grid-template-columns:1fr}.role-card{min-height:112px}.login-body.auth-page{padding-bottom:20px}.auth-form .form-control-lg{font-size:1rem;padding:.8rem 1rem}}
 
-/* Mobile fix: papan tabel interaktif */
-.vertical-table-wrap {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
+/* Fix final tangga satuan desktop dan mobile */
+.canvas-panel,
+.ladder-full-panel {
+    overflow: visible !important;
 }
 
-.vertical-table-wrap::after {
-    content: "Geser tabel ke kanan/kiri →";
+#ladderCanvas {
     display: block;
-    font-size: .85rem;
-    font-weight: 800;
-    color: #2563eb;
-    padding: .45rem .2rem .1rem;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto;
 }
 
-.vertical-unit-table {
-    min-width: 720px;
-}
-
-@media (max-width: 576px) {
-    .table-lesson-card {
-        padding: 1rem;
-        border-radius: 24px;
-    }
-
-    .vertical-table-wrap {
-        padding: .5rem;
-        border-radius: 18px;
-    }
-
-    .vertical-unit-table {
-        min-width: 680px;
-        border-spacing: 0 .45rem;
-    }
-
-    .vertical-unit-table th,
-    .vertical-unit-table td {
-        padding: .65rem .5rem;
-        font-size: .9rem;
-        white-space: nowrap;
-    }
-
-    .vertical-unit-table td b {
-        font-size: 1.15rem;
-    }
-
-    .vertical-unit-table .number-cell {
-        font-size: 1.15rem;
-    }
-}
-/* Fix mobile tangga satuan */
 @media (max-width: 640px) {
-    .ladder-card,
-    .ladder-board,
-    .unit-ladder-card,
-    .student-card {
-        overflow: visible !important;
+    .ladder-full-panel {
+        padding: 1rem !important;
+        border-radius: 24px !important;
     }
 
-    canvas#ladderCanvas,
     #ladderCanvas {
-        width: 100% !important;
-        max-width: 100% !important;
-        display: block;
-        margin: 0 auto;
+        min-height: 760px;
+    }
+
+    .zero-animation-track {
+        margin-top: 1rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 }
