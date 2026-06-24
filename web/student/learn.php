@@ -100,7 +100,7 @@ render_header('Papan Belajar','learn');
         </div>
     </div>
 </div>
-<script src="<?= url('assets/js/table_lesson.js') ?>?v=8.4"></script>
+<script src="<?= url('assets/js/table_lesson.js') ?>?v=8.5"></script>
 <script>
 document.getElementById('markLearnCompleted')?.addEventListener('click', async()=>{
   await fetch('../api/academic_mark_progress.php',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':document.querySelector('meta[name="csrf-token"]')?.content||''},body:JSON.stringify({type:'learn'})}).catch(()=>{});

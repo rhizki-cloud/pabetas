@@ -54,3 +54,58 @@
 .auth-container{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;z-index:2}.auth-shell{width:min(1080px,100%);display:grid;grid-template-columns:1.05fr .95fr;background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.7);box-shadow:0 28px 90px rgba(15,23,42,.16);border-radius:38px;overflow:hidden;backdrop-filter:blur(16px)}.auth-shell-register{grid-template-columns:.9fr 1.1fr}.auth-hero-panel{position:relative;min-height:560px;padding:42px;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(135deg,#1d4ed8,#0ea5e9 52%,#22c55e);color:#fff;overflow:hidden}.auth-hero-panel:before{content:"";position:absolute;inset:auto -70px -90px auto;width:270px;height:270px;background:rgba(255,255,255,.18);border-radius:50%}.auth-hero-panel:after{content:"♪";position:absolute;right:46px;top:36px;font-size:5rem;line-height:1;color:rgba(255,255,255,.18);font-weight:1000}.auth-logo{width:92px;height:92px;background:#fff;border-radius:24px;padding:8px;box-shadow:0 14px 35px rgba(15,23,42,.18)}.auth-badge{display:inline-flex;width:max-content;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:.55rem .9rem;font-weight:900;margin-bottom:1rem}.auth-hero-panel h1{font-size:clamp(2.5rem,5vw,4.5rem);font-weight:1000;line-height:1.02;margin-bottom:1rem}.auth-hero-panel p{font-size:1.15rem;line-height:1.65;max-width:560px}.auth-feature-list{display:grid;gap:.75rem;margin-top:1rem}.auth-feature-list div,.role-info-card{background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.25);border-radius:18px;padding:.9rem 1rem;font-weight:800}.role-info-card{color:#fff;margin-top:1.2rem;line-height:1.55}.auth-form-panel{padding:38px;display:flex;flex-direction:column;justify-content:center;background:#fff}.auth-form-panel h2{font-size:2.2rem;font-weight:1000;color:#0f172a}.auth-form .form-control{border-radius:18px;border:2px solid #e2e8f0}.auth-form .form-control:focus{border-color:#60a5fa;box-shadow:0 0 0 .25rem rgba(96,165,250,.2)}.auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}.auth-actions .btn{font-weight:1000;padding:.85rem 1rem}.demo-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:1rem;text-align:center;color:#475569}.role-picker{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}.role-card{position:relative;display:grid;place-items:center;gap:.25rem;min-height:132px;border:3px solid #dbeafe;border-radius:24px;background:#f8fafc;cursor:pointer;transition:.18s;text-align:center;padding:1rem}.role-card input{position:absolute;opacity:0;pointer-events:none}.role-card span{font-size:2.5rem}.role-card b{font-size:1.25rem;font-weight:1000;color:#0f172a}.role-card small{font-weight:800;color:#64748b}.role-card:hover,.role-card.selected{transform:translateY(-2px);background:#eff6ff;border-color:#2563eb;box-shadow:0 16px 35px rgba(37,99,235,.14)}.student-fields{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:20px;padding:.9rem;margin-bottom:.8rem}.auth-bg-bubble{position:fixed;z-index:0;pointer-events:none;border-radius:999px;filter:blur(2px);opacity:.55}.bubble-a{width:210px;height:210px;left:4%;top:8%;background:#bfdbfe}.bubble-b{width:260px;height:260px;right:4%;bottom:6%;background:#fde68a}.sound-pop{animation:soundPop .24s ease both}.sound-correct{animation:soundCorrect .5s ease both}.sound-wrong{animation:soundWrong .38s ease both}@keyframes soundPop{50%{transform:scale(.96)}100%{transform:scale(1)}}@keyframes soundCorrect{0%{box-shadow:0 0 0 0 rgba(34,197,94,.35)}50%{transform:scale(1.04);box-shadow:0 0 0 12px rgba(34,197,94,.12)}100%{transform:scale(1);box-shadow:0 0 0 0 rgba(34,197,94,0)}}@keyframes soundWrong{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}100%{transform:translateX(0)}}#soundToggle{font-weight:1000;white-space:nowrap}.nav-user-box #soundToggle{min-width:116px}.option-box,.btn,.role-card,.avatar-choice,.mood-option{transition:transform .16s ease, box-shadow .16s ease, background .16s ease}
 @media(max-width:992px){.auth-shell,.auth-shell-register{grid-template-columns:1fr;max-width:720px}.auth-hero-panel{min-height:auto;padding:30px}.auth-hero-panel h1{font-size:2.7rem}.auth-form-panel{padding:28px}.auth-feature-list{grid-template-columns:1fr}.auth-actions{grid-template-columns:1fr 1fr}.nav-user-box #soundToggle{min-width:auto}}
 @media(max-width:576px){.auth-container{align-items:flex-start}.auth-shell{border-radius:28px}.auth-hero-panel{padding:24px}.auth-logo{width:74px;height:74px}.auth-hero-panel h1{font-size:2.15rem}.auth-hero-panel p{font-size:1rem}.auth-form-panel{padding:22px}.auth-form-panel h2{font-size:1.8rem}.role-picker{grid-template-columns:1fr}.auth-actions{grid-template-columns:1fr}.role-card{min-height:112px}.login-body.auth-page{padding-bottom:20px}.auth-form .form-control-lg{font-size:1rem;padding:.8rem 1rem}}
+
+/* Mobile fix: papan tabel interaktif */
+.vertical-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+}
+
+.vertical-table-wrap::after {
+    content: "Geser tabel ke kanan/kiri →";
+    display: block;
+    font-size: .85rem;
+    font-weight: 800;
+    color: #2563eb;
+    padding: .45rem .2rem .1rem;
+}
+
+.vertical-unit-table {
+    min-width: 720px;
+}
+
+@media (max-width: 576px) {
+    .table-lesson-card {
+        padding: 1rem;
+        border-radius: 24px;
+    }
+
+    .vertical-table-wrap {
+        padding: .5rem;
+        border-radius: 18px;
+    }
+
+    .vertical-unit-table {
+        min-width: 680px;
+        border-spacing: 0 .45rem;
+    }
+
+    .vertical-unit-table th,
+    .vertical-unit-table td {
+        padding: .65rem .5rem;
+        font-size: .9rem;
+        white-space: nowrap;
+    }
+
+    .vertical-unit-table td b {
+        font-size: 1.15rem;
+    }
+
+    .vertical-unit-table .number-cell {
+        font-size: 1.15rem;
+    }
+}

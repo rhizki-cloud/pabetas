@@ -14,10 +14,32 @@ function redirect($path) {
     exit;
 }
 
+function csrf_cookie_options() {
+    $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+
+    return [
+        'expires' => time() + (7 * 24 * 60 * 60),
+        'path' => '/',
+        'secure' => $secure,
+        'httponly' => false,
+        'samesite' => 'Lax',
+    ];
+}
+
 function csrf_token() {
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    if (!empty($_SESSION['csrf_token'])) {
+        return $_SESSION['csrf_token'];
     }
+
+    if (!empty($_COOKIE['pabetas_csrf'])) {
+        $_SESSION['csrf_token'] = $_COOKIE['pabetas_csrf'];
+        return $_SESSION['csrf_token'];
+    }
+
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    setcookie('pabetas_csrf', $_SESSION['csrf_token'], csrf_cookie_options());
+
     return $_SESSION['csrf_token'];
 }
 
@@ -27,7 +49,13 @@ function csrf_field() {
 
 function verify_csrf($token = null) {
     $token = $token ?? ($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
-    if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+    $sessionToken = $_SESSION['csrf_token'] ?? '';
+    $cookieToken = $_COOKIE['pabetas_csrf'] ?? '';
+
+    if (
+        ($sessionToken === '' || !hash_equals($sessionToken, $token))
+        && ($cookieToken === '' || !hash_equals($cookieToken, $token))
+    ) {
         http_response_code(419);
         exit('CSRF token tidak valid. Muat ulang halaman lalu coba lagi.');
     }

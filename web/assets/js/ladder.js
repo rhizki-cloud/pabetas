@@ -24,7 +24,9 @@
   function resize(){
     const ratio=window.devicePixelRatio || 1;
     const width=canvas.parentElement?.clientWidth || 980;
-    const height=Math.max(500, Math.min(640, width*0.56));
+    const height = width < 576
+  ? Math.max(560, width * 1.35)
+  : Math.max(520, Math.min(640, width * 0.56));
     canvas.style.width='100%';
     canvas.style.height=height+'px';
     canvas.width=width*ratio;
@@ -34,21 +36,34 @@
   }
 
   function coords(i){
-    const width=w(), height=h();
-    const small=width<760;
-
-    // Ruang kanan dibuat lebih besar supaya karakter, badge DARI/KE,
-    // dan kartu mm tidak menumpuk di tepi canvas.
-    const leftPad=small?22:52;
-    const rightPad=small?88:132;
-    const usable=Math.max(360, width-leftPad-rightPad);
-    const step=usable/6;
-    const bw=Math.min(small?58:92, step*.72);
-    const bh=small?44:58;
-    const startX=leftPad;
-    const startY=height-(small?92:118);
-    const rise=(startY-(small?136:158))/6;
-    return {x:startX+i*step,y:startY-i*rise,step,bw,bh,small};
+    const width = w();
+    const height = h();
+    const small = width < 760;
+  
+    const leftPad = small ? 18 : 52;
+    const rightPad = small ? 22 : 72;
+    const topPad = small ? 122 : 150;
+    const bottomPad = small ? 96 : 118;
+  
+    const bw = small ? Math.min(52, Math.max(42, width / 8.4)) : 92;
+    const bh = small ? 42 : 58;
+  
+    const startX = leftPad;
+    const endX = Math.max(startX + (bw * 6.4), width - rightPad - bw);
+    const step = (endX - startX) / 6;
+  
+    const startY = height - bottomPad;
+    const endY = topPad;
+    const rise = (startY - endY) / 6;
+  
+    return {
+      x: startX + i * step,
+      y: startY - i * rise,
+      step,
+      bw,
+      bh,
+      small
+    };
   }
 
   function rr(x,y,w,h,r){

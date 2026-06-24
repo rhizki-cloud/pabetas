@@ -27,6 +27,10 @@ define('DB_USER', env_value('DB_USER', 'root'));
 define('DB_PASS', env_value('DB_PASS', ''));
 define('DB_CHARSET', env_value('DB_CHARSET', 'utf8mb4'));
 
+define('AUTH_SECRET', env_value('AUTH_SECRET', 'pabetas-local-secret-change-this'));
+define('AUTH_COOKIE', 'pabetas_auth');
+define('AUTH_COOKIE_DAYS', 7);
+
 define('SCHOOL_NAME', env_value('SCHOOL_NAME', 'SD Contoh Nusantara'));
 define('SCHOOL_LOGO', env_value('SCHOOL_LOGO', 'assets/img/logo-pabetas.svg'));
 
