@@ -35,8 +35,16 @@ function db() {
             // Aiven recommends verify-ca with the downloaded ca.pem certificate.
             $dsn .= ';sslmode=verify-ca;sslrootcert=' . $sslCaPath;
 
-            if (defined('PDO::MYSQL_ATTR_SSL_CA')) {
-                $options[PDO::MYSQL_ATTR_SSL_CA] = $sslCaPath;
+            $sslCaAttr = null;
+
+            if (class_exists('Pdo\\Mysql') && defined('Pdo\\Mysql::ATTR_SSL_CA')) {
+                $sslCaAttr = constant('Pdo\\Mysql::ATTR_SSL_CA');
+            } elseif (PHP_VERSION_ID < 80500 && defined('PDO::MYSQL_ATTR_SSL_CA')) {
+                $sslCaAttr = PDO::MYSQL_ATTR_SSL_CA;
+            }
+            
+            if ($sslCaAttr !== null) {
+                $options[$sslCaAttr] = $sslCaPath;
             }
         } else {
             // Keep this explicit so the deployment fails with a clear message in debug mode.
