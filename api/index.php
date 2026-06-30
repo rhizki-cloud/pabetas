@@ -8,46 +8,22 @@ if ($uri === '/install.php' && (getenv('APP_ENV') ?: 'local') === 'production') 
     exit('Not Found');
 }
 
-$publicRoot = realpath(__DIR__ . '/../web');
+$publicRoot = realpath(__DIR__ . '/../public');
 
-if (!$publicRoot) {
-    http_response_code(500);
-    exit('Folder web tidak ditemukan.');
+if ($uri === '/') {
+    $target = $publicRoot . '/index.php';
+} else {
+    $target = realpath($publicRoot . $uri);
 }
 
-$target = $uri === '/'
-    ? $publicRoot . '/index.php'
-    : realpath($publicRoot . $uri);
+if ($target && str_starts_with($target, $publicRoot) && is_file($target)) {
+    if (pathinfo($target, PATHINFO_EXTENSION) === 'php') {
+        require $target;
+        exit;
+    }
 
-if (!$target || strpos($target, $publicRoot) !== 0 || !is_file($target)) {
-    http_response_code(404);
-    echo 'Halaman tidak ditemukan';
-    exit;
+    return false;
 }
 
-$extension = strtolower(pathinfo($target, PATHINFO_EXTENSION));
-
-if ($extension === 'php') {
-    require $target;
-    exit;
-}
-
-$mimeTypes = [
-    'css'  => 'text/css; charset=utf-8',
-    'js'   => 'application/javascript; charset=utf-8',
-    'svg'  => 'image/svg+xml',
-    'png'  => 'image/png',
-    'jpg'  => 'image/jpeg',
-    'jpeg' => 'image/jpeg',
-    'gif'  => 'image/gif',
-    'ico'  => 'image/x-icon',
-    'webp' => 'image/webp',
-    'json' => 'application/json; charset=utf-8',
-    'txt'  => 'text/plain; charset=utf-8',
-];
-
-header('Content-Type: ' . ($mimeTypes[$extension] ?? 'application/octet-stream'));
-header('Cache-Control: public, max-age=31536000');
-
-readfile($target);
-exit;
+http_response_code(404);
+echo 'Halaman tidak ditemukan';

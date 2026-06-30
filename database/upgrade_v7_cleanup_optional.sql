@@ -1,0 +1,1 @@
+-- Tidak dipakai lagi pada V8. Gunakan upgrade_v8_table_lesson_no_drag.sql.

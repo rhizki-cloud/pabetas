@@ -1,0 +1,7 @@
+Options -Indexes
+<IfModule mod_rewrite.c>
+RewriteEngine On
+</IfModule>
+<FilesMatch "\.(sql|md|sh|json)$">
+    Require all denied
+</FilesMatch>

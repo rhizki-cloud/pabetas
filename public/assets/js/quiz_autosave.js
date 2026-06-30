@@ -1,0 +1,6 @@
+let timer=20*60; const timerEl=document.getElementById('timer'); const saveEl=document.getElementById('saveStatus');
+setInterval(()=>{timer--; const m=String(Math.floor(timer/60)).padStart(2,'0'), s=String(timer%60).padStart(2,'0'); if(timerEl) timerEl.textContent=`${m}:${s}`; if(timer<=0) document.getElementById('quizForm')?.submit();},1000);
+let autosaveTimer=null;
+document.querySelectorAll('[data-question-id]').forEach(el=>{el.addEventListener('input',scheduleSave);el.addEventListener('change',scheduleSave)});
+function scheduleSave(e){clearTimeout(autosaveTimer); const el=e.target; autosaveTimer=setTimeout(()=>saveAnswer(el),450)}
+async function saveAnswer(el){const qid=el.dataset.questionId; let answer=el.value; if(el.type==='radio'){const checked=document.querySelector(`input[name="${el.name}"]:checked`); answer=checked?checked.value:'';} if(saveEl) saveEl.textContent='Menyimpan...'; try{const res=await fetch('../api/autosave.php',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrfToken()},body:JSON.stringify({session_id:window.PABETAS_SESSION_ID,question_id:qid,answer})}); const data=await res.json(); if(saveEl) saveEl.textContent=data.ok?`Tersimpan ${data.saved_at}`:'Gagal menyimpan';}catch(err){if(saveEl) saveEl.textContent='Offline, coba lagi';}}

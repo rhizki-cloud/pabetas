@@ -26,10 +26,6 @@ if (isset($_SESSION['user_id'])) {
         $_SESSION['last_activity'] = time();
     }
     if (time() - $_SESSION['last_activity'] > SESSION_TIMEOUT) {
-        if (function_exists('auth_clear_cookie')) {
-            auth_clear_cookie();
-        }
-    
         session_unset();
         session_destroy();
         redirect('login.php?timeout=1');
