@@ -36,13 +36,12 @@ function db() {
             $dsn .= ';sslmode=verify-ca;sslrootcert=' . $sslCaPath;
 
             $sslCaAttr = null;
-
             if (class_exists('Pdo\\Mysql') && defined('Pdo\\Mysql::ATTR_SSL_CA')) {
                 $sslCaAttr = constant('Pdo\\Mysql::ATTR_SSL_CA');
             } elseif (PHP_VERSION_ID < 80500 && defined('PDO::MYSQL_ATTR_SSL_CA')) {
                 $sslCaAttr = PDO::MYSQL_ATTR_SSL_CA;
             }
-            
+
             if ($sslCaAttr !== null) {
                 $options[$sslCaAttr] = $sslCaPath;
             }
