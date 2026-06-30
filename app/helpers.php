@@ -3,14 +3,49 @@ function e($value) {
     return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
 }
 
+function app_base_url() {
+    if (defined('APP_URL') && APP_URL !== '') {
+        return rtrim(APP_URL, '/');
+    }
+
+    $proto = 'http';
+    if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+        $proto = trim(explode(',', $_SERVER['HTTP_X_FORWARDED_PROTO'])[0]);
+    } elseif (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        $proto = 'https';
+    }
+
+    $host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? '';
+    $host = trim(explode(',', $host)[0]);
+
+    return $host !== '' ? $proto . '://' . $host : '';
+}
+
 function url($path = '') {
-    $base = rtrim(APP_URL, '/');
-    $path = ltrim($path, '/');
-    return $base . '/' . $path;
+    if (preg_match('#^https?://#i', (string)$path)) {
+        return $path;
+    }
+
+    $base = app_base_url();
+    $path = ltrim((string)$path, '/');
+
+    if ($base === '') {
+        return '/' . $path;
+    }
+
+    return rtrim($base, '/') . '/' . $path;
 }
 
 function redirect($path) {
-    header('Location: ' . url($path));
+    $location = url($path);
+
+    if (!headers_sent()) {
+        header('Location: ' . $location, true, 302);
+        exit;
+    }
+
+    echo '<!doctype html><meta charset="utf-8"><script>window.location.href=' . json_encode($location) . ';</script>';
+    echo '<p>Mengalihkan ke <a href="' . e($location) . '">' . e($location) . '</a></p>';
     exit;
 }
 
