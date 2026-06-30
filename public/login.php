@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login PABETAS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?= url('assets/css/style.css?v=9') ?>">
+    <link rel="stylesheet" href="<?= url('assets/css/style.css?v=10') ?>">
     <style>
         body.login-body.auth-page{overflow:auto!important;min-height:100vh;background:radial-gradient(circle at 8% 10%,#dbeafe 0,#f0f9ff 26%,transparent 45%),radial-gradient(circle at 90% 8%,#fef3c7 0,#fff7ed 24%,transparent 42%),linear-gradient(135deg,#eff6ff 0%,#fff7ed 100%);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
         .auth-container{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;z-index:2}.auth-shell{width:min(1080px,100%);display:grid;grid-template-columns:1.05fr .95fr;background:rgba(255,255,255,.84);border:1px solid rgba(255,255,255,.7);box-shadow:0 28px 90px rgba(15,23,42,.16);border-radius:38px;overflow:hidden;backdrop-filter:blur(16px)}
@@ -74,6 +74,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </section>
     </div>
 </div>
-<script src="<?= url('assets/js/sounds.js?v=9') ?>"></script>
+<script src="<?= url('assets/js/sounds.js?v=10') ?>"></script>
 </body>
 </html>
