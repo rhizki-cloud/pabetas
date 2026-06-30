@@ -17,12 +17,35 @@ if ($uri === '/') {
 }
 
 if ($target && str_starts_with($target, $publicRoot) && is_file($target)) {
-    if (pathinfo($target, PATHINFO_EXTENSION) === 'php') {
+    $extension = strtolower(pathinfo($target, PATHINFO_EXTENSION));
+
+    if ($extension === 'php') {
         require $target;
         exit;
     }
 
-    return false;
+    $mimeTypes = [
+        'css'  => 'text/css; charset=utf-8',
+        'js'   => 'application/javascript; charset=utf-8',
+        'svg'  => 'image/svg+xml',
+        'png'  => 'image/png',
+        'jpg'  => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'gif'  => 'image/gif',
+        'webp' => 'image/webp',
+        'ico'  => 'image/x-icon',
+        'json' => 'application/json; charset=utf-8',
+        'pdf'  => 'application/pdf',
+        'mp3'  => 'audio/mpeg',
+        'wav'  => 'audio/wav',
+        'woff' => 'font/woff',
+        'woff2'=> 'font/woff2',
+    ];
+
+    header('Content-Type: ' . ($mimeTypes[$extension] ?? 'application/octet-stream'));
+    header('Cache-Control: public, max-age=86400');
+    readfile($target);
+    exit;
 }
 
 http_response_code(404);
